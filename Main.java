@@ -1,142 +1,111 @@
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.List;
 
-public class Main extends JFrame {
 
-    private JTable table; // Make table accessible in the class
+
+public class Main extends JFrame {
+    
+    private JComboBox<String> destinationComboBox;
+    private JTabbedPane tabbedPane;
+    private Accommodation accommodationPanel;
 
     public Main() {
+        // Set up the main window
         setTitle("Tourify");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLayout(new BorderLayout());
+        setLayout(new CardLayout());
+
+        // Prevent the window from being resized
         setResizable(false);
 
-        // Load image and setup labels
-        ImageIcon imageIcon = new ImageIcon("C:\\Users\\User\\Documents\\TL\\paradot3\\src\\tourify.jpg");
+        // Load the image
+        ImageIcon imageIcon = new ImageIcon("C:\\Users\\30690\\OneDrive - University of Patras\\Έγγραφα\\project-tl\\paradoteo3\\src\\τλ.png");
         JLabel imageLabel = new JLabel(imageIcon);
+
+        // Top label
         JLabel titleLabel = new JLabel("Καλωσήρθατε στο Tourify", SwingConstants.CENTER);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 16));
 
-        // Setup tabbed pane with tabs
-        JTabbedPane tabbedPane = new JTabbedPane();
-        String[] tabNames = {"Αρχική", "Διαμονή", "Μεταφορικά", "Προφίλ", "Κρατήσεις"};
-        for (String name : tabNames) {
-            if (name.equals("Μεταφορικά")) {
-                tabbedPane.add(name, createTransportationTab());
-            } else if (name.equals("Κρατήσεις")) {
-                tabbedPane.add(name, createReservationTab());
-            } else {
-                tabbedPane.add(name, new JLabel("Content for " + name, SwingConstants.CENTER));
-            }
+        // Tabbed pane for different sections
+        tabbedPane = new JTabbedPane();
+
+       
+        JPanel homePanel = new JPanel(new BorderLayout());
+        homePanel.add(new JLabel("Βρείτε τον επόμενο προορισμό σας! ", SwingConstants.CENTER), BorderLayout.NORTH);
+
+        // Button panel for the extra buttons
+        JPanel buttonPanel = new JPanel(new GridLayout(5, 1));
+        JButton[] buttons = new JButton[]{
+            new JButton("ΠΡΟΣΦΟΡΕΣ"),
+            new JButton("Εδώ θα δείτε όλους τους πληρωμένους προορισμούς"),
+            new JButton("Επικοινωνήστε μαζί μας"),
+            new JButton("Αποσύνδεση")
+        };
+
+        JButton searchButton = new JButton("Αναζήτηση");
+        
+        buttonPanel.add(searchButton); 
+        for (JButton button : buttons) {
+            buttonPanel.add(button);
         }
+        homePanel.add(buttonPanel, BorderLayout.SOUTH);
 
-        // Setup buttons
-        JPanel buttonPanel = setupButtonPanel();
+        tabbedPane.add("Αρχική", homePanel);
 
-        // Organize central panel
-        JPanel centerPanel = new JPanel(new BorderLayout());
-        centerPanel.add(titleLabel, BorderLayout.NORTH);
-        centerPanel.add(tabbedPane, BorderLayout.CENTER);
-        centerPanel.add(buttonPanel, BorderLayout.SOUTH);
+        searchButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Switch to the "Διαμονή" tab
+                tabbedPane.setSelectedIndex(tabbedPane.indexOfTab("Διαμονή"));
+        
+                // Get selected destination
+                String selectedDestination = (String) destinationComboBox.getSelectedItem();
+                // Update the accommodation panel based on the selected destination
+                accommodationPanel.updateHotels(selectedDestination);
+            }
+        });
+        
+        // Initialize the accommodation panel
+        accommodationPanel = new Accommodation();
+        tabbedPane.add("Διαμονή", accommodationPanel);
 
-        // Add components to JFrame
+        // Adding other tabs
+        tabbedPane.add("Μεταφορικά", new JLabel("Content for Μεταφορικά", SwingConstants.CENTER));
+        tabbedPane.add("Προφίλ", new JLabel("Content for Προφίλ", SwingConstants.CENTER));
+
+        // Add panels to the main frame
+        setLayout(new BorderLayout());
         add(imageLabel, BorderLayout.NORTH);
-        add(centerPanel, BorderLayout.CENTER);
+        add(tabbedPane, BorderLayout.CENTER);
 
-        pack();
-        setLocationRelativeTo(null);
+        // Set visibility
+        pack();  // Adjust window size to fit the components
+        setLocationRelativeTo(null); // Center the window
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setVisible(true);
-    }
 
-    private JPanel setupButtonPanel() {
-        JPanel buttonPanel = new JPanel(new GridLayout(4, 1));
-        JButton btnOffers = new JButton("ΠΡΟΣΦΟΡΕΣ");
-        JButton btnDestinations = new JButton("Εδώ θα δείτε όλους τους πιθανούς προορισμούς");
-        JButton btnContact = new JButton("Επικοινωνήστε μαζί μας");
-        JButton btnLogout = new JButton("Αποσύνδεση");
-
-        btnLogout.addActionListener(e -> {
-            dispose(); // Close the current window
-            new user().setVisible(true); // Assuming Login class has a visible method to show the login window
-        });
-
-        buttonPanel.add(btnOffers);
-        buttonPanel.add(btnDestinations);
-        buttonPanel.add(btnContact);
-        buttonPanel.add(btnLogout);
-
-        return buttonPanel;
-    }
-
-    private JScrollPane createTransportationTab() {
-        List<Transportation> dataList = Transportation.getAllTransportations();
-        String[] columnNames = {"ID", "Departure", "Arrival", "Departure Time", "Arrival Time", "Price", "Availability", "Status"};
-        DefaultTableModel model = new DefaultTableModel(columnNames, 0);
-        for (Transportation data : dataList) {
-            model.addRow(new Object[]{
-                data.getTransportationId(),
-                data.getDepartureLocation(),
-                data.getArrivalLocation(),
-                data.getDepartureTime(),
-                data.getArrivalTime(),
-                data.getPrice(),
-                data.getAvailability(),
-                data.getReservationStatus()
-            });
+        destinationComboBox = new JComboBox<>();
+        List<String> destinations = new DatabaseManager().getDestinations();
+        for (String destination : destinations) {
+            destinationComboBox.addItem(destination);
         }
-        JTable table = new JTable(model);
-        return new JScrollPane(table);
-    }
     
-
-    private JPanel createReservationTab() {
-        JPanel panel = new JPanel(new BorderLayout());
-        List<Transportation> availableTransports = Transportation.getAllTransportations(); 
-        String[] columns = {"ID", "Departure", "Arrival", "Departure Time", "Arrival Time", "Price", "Availability"};
-        DefaultTableModel model = new DefaultTableModel(columns, 0);
-
-        for (Transportation transport : availableTransports) {
-            model.addRow(new Object[]{
-                transport.getTransportationId(),
-                transport.getDepartureLocation(),
-                transport.getArrivalLocation(),
-                transport.getDepartureTime(),
-                transport.getArrivalTime(),
-                transport.getPrice(),
-                transport.getAvailability()
-            });
-        }
-
-        table = new JTable(model);
-        JScrollPane scrollPane = new JScrollPane(table);
-        panel.add(scrollPane, BorderLayout.CENTER);
-
-        JButton reserveButton = new JButton("Make Reservation");
-        reserveButton.addActionListener(e -> makeReservation(table.getSelectedRow()));
-        panel.add(reserveButton, BorderLayout.SOUTH);
-
-        return panel;
+        // You can place the combo box wherever you want, here is an example
+        JPanel comboPanel = new JPanel();
+        comboPanel.add(new JLabel("Επιλέξτε Προορισμό:"));
+        comboPanel.add(destinationComboBox);
+        homePanel.add(comboPanel, BorderLayout.CENTER);
     }
-
-    private void makeReservation(int selectedRowIndex) {
-        if (selectedRowIndex != -1) { // Check if a row is selected
-            int transportId = (int) table.getModel().getValueAt(selectedRowIndex, 0);
-            Reservation reservation = new Reservation();
-            boolean success = reservation.createReservation(transportId);
-            if (success) {
-                JOptionPane.showMessageDialog(this, "Reservation successful!");
-            } else {
-                JOptionPane.showMessageDialog(this, "Reservation failed!");
-            }
-        } else {
-            JOptionPane.showMessageDialog(this, "Please select a transportation option.");
-        }
-    }
+        
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(Main::new); // Ensures GUI is created in the Event Dispatch Thread
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                new Main();
+            }
+        });
     }
 }

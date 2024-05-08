@@ -57,7 +57,7 @@ public class user extends JFrame {
 
         // Registration Panel
         JPanel registerPanel = new JPanel(new GridBagLayout());
-        registerPanel.add(new JLabel(imageIcon), constraints); // Add image at the top of the Registration Panel
+        registerPanel.add(new JLabel(imageIcon), constraints); 
 
         nameField = new JTextField(20);
         surnameField = new JTextField(20);
@@ -69,8 +69,7 @@ public class user extends JFrame {
         BacktologinButton = new JButton("Back to login");
 
         registerButton.addActionListener(e -> performRegistration());
-        BacktologinButton.addActionListener(e -> switchToLogin()); // Now the button is correctly instantiated before adding the listener
-
+        BacktologinButton.addActionListener(e -> switchToLogin()); 
         registerPanel.add(new JLabel("Name:"), constraints);
         registerPanel.add(nameField, constraints);
         registerPanel.add(new JLabel("Surname:"), constraints);

@@ -31,7 +31,6 @@
 1. **JDK 8** ή νεότερο
 2. **MySQL** ή **MariaDB**
 3. Ο οδηγός **MySQL Connector/J**
-4. Ένα IDE, όπως IntelliJ IDEA, Eclipse ή NetBeans, προαιρετικά
 
 ### Ρύθμιση βάσης δεδομένων
 1. Εκκινήστε τον MySQL ή MariaDB server.
@@ -52,28 +51,6 @@ Password: κενό
 
 Αν οι δικές σας ρυθμίσεις είναι διαφορετικές, αλλάξτε τα στοιχεία σύνδεσης στα αρχεία Java.
 
-### Εκτέλεση
-Η αρχική κλάση της εφαρμογής είναι η:
-
-```text
-user.java
-```
-
-Μέσα από IDE, ανοίξτε το project, προσθέστε το MySQL Connector/J στις βιβλιοθήκες και εκτελέστε τη μέθοδο `main` της κλάσης `user`.
-
-Παράδειγμα από γραμμή εντολών σε Windows:
-
-```bash
-javac -cp ".;mysql-connector-j.jar" *.java
-java -cp ".;mysql-connector-j.jar" user
-```
-
-Σε Linux ή macOS χρησιμοποιήστε `:` αντί για `;`:
-
-```bash
-javac -cp ".:mysql-connector-j.jar" *.java
-java -cp ".:mysql-connector-j.jar" user
-```
 
 ### Σημαντική σημείωση για την εικόνα
 Σε ορισμένα αρχεία υπάρχει απόλυτη διαδρομή εικόνας από τον υπολογιστή του δημιουργού. Για να εμφανίζεται σωστά η εικόνα σε άλλον υπολογιστή, αντικαταστήστε τη διαδρομή με σχετική διαδρομή, για παράδειγμα:
@@ -115,7 +92,7 @@ To run the application, you need:
 1. **JDK 8** or newer
 2. **MySQL** or **MariaDB**
 3. **MySQL Connector/J**
-4. An IDE such as IntelliJ IDEA, Eclipse or NetBeans, optional
+
 
 ### Database setup
 1. Start the MySQL or MariaDB server.
@@ -136,28 +113,7 @@ Password: empty
 
 If your database settings are different, update the connection information inside the Java files.
 
-### Running the application
-The main entry class is:
 
-```text
-user.java
-```
-
-Using an IDE, open the project, add MySQL Connector/J to the project libraries and run the `main` method of the `user` class.
-
-Windows command-line example:
-
-```bash
-javac -cp ".;mysql-connector-j.jar" *.java
-java -cp ".;mysql-connector-j.jar" user
-```
-
-On Linux or macOS, use `:` instead of `;`:
-
-```bash
-javac -cp ".:mysql-connector-j.jar" *.java
-java -cp ".:mysql-connector-j.jar" user
-```
 
 ### Important image note
 Some source files contain an absolute image path from the original developer's computer. To display the image correctly on another computer, replace it with a relative path, for example:
